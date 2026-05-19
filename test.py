@@ -1,5 +1,6 @@
 import pytest
 import sandbox
+import chord_grammar as cg
 from Note import Note
 
 def test_detect_primary_chords():
@@ -18,10 +19,10 @@ def test_detect_primary_chords():
     amin_list = [a4, c4, e4]
     bdim_list = [b4, d4, f4]
 
-    assert sandbox.detect_primary_triad(cmaj_list, 'C') == 'c:maj'
-    assert sandbox.detect_primary_triad(dmin_list, 'C') == 'd:min'
-    assert sandbox.detect_primary_triad(emin_list, 'C') == 'e:min'
-    assert sandbox.detect_primary_triad(fmaj_list, 'C') == 'f:maj'
-    assert sandbox.detect_primary_triad(gmaj_list, 'C') == 'g:maj'
-    assert sandbox.detect_primary_triad(amin_list, 'C') == 'a:min'
-    assert sandbox.detect_primary_triad(bdim_list, 'C') == 'b:dim'
+    assert cg.detect_primary_triad(cmaj_list, 'C') == 'c:maj'
+    assert cg.detect_primary_triad(dmin_list, 'C') == 'd:min'
+    assert cg.detect_primary_triad(emin_list, 'C') == 'e:min'
+    assert cg.detect_primary_triad(fmaj_list, 'C') == 'f:maj'
+    assert cg.detect_primary_triad(gmaj_list, 'C') == 'g:maj'
+    assert cg.detect_primary_triad(amin_list, 'C') == 'a:min'
+    assert cg.detect_primary_triad(bdim_list, 'C') == 'b:dim'
