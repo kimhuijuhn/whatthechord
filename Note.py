@@ -22,4 +22,17 @@ class Note:
         return self.pitch == other.pitch and self.octave == other.octave
 
     def get_interval(self, other):
-        return self._value - other._value
+        return abs(self._value - other._value) % 12
+    
+    # Utility methods
+
+    def init_from_char(char, octave):
+        # validate if char is a note
+        if char not in NOTE_MAP:
+            print("Invalid character.")
+            return
+        
+        # build a Note with the requested pitch and octave
+        midi_value = NOTE_MAP.index(char) + (12 * (octave + 1))
+
+        return Note(midi_value)
