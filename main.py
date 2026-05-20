@@ -1,5 +1,5 @@
 from rtmidi import midiutil
-import controller
+from src import controller
 
 def main():
     midiin, portname = midiutil.open_midiport(0)

@@ -1,4 +1,4 @@
-import Note
+from . import Note
 
 MODES = {
     "ionian": [(0, 'maj'), (2, 'min'), (4, 'min'), (5, 'maj'), (7, 'maj'), 
@@ -8,7 +8,7 @@ MODES = {
 class Scale:
     """
     Represents a musical scale. Defaults to major(ionian) scale.
-    Does not contain octave information.
+    Scale class does NOT contain octave information.
 
     Args:
         root(str): the pitch of a root note. 

@@ -1,6 +1,6 @@
 import pytest
-from Note import Note
-from Scale import Scale
+from src.Note import Note
+from src.Scale import Scale
 
 c4 = Note(60)
 d4 = Note(62)

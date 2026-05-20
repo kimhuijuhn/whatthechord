@@ -1,6 +1,8 @@
+#TODO: add timestamp information
+
 import time
-from Note import Note
-import chord_grammar as cg
+from .Note import Note
+from . import chordgrammar as cg
 
 def print_current_on_notes(midiin):
     """ Print list of currently ON notes based on message """
@@ -22,9 +24,7 @@ def print_current_on_notes(midiin):
                     current_notes.remove(note)
 
                 # print current ON notes
-                print(current_notes)
-                if cg.detect_primary_triad(current_notes, 'C') != None:
-                    print(cg.detect_primary_triad(current_notes, 'C'))
+                print(f"{current_notes}".ljust(40), end="\r", flush=True)
 
             time.sleep(0.01)
     except KeyboardInterrupt:

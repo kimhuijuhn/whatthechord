@@ -1,13 +1,15 @@
 import pytest
-from Note import Note
+from src.Note import Note
 
-def test_init_from_char():
-    assert Note.init_from_char("A") == Note(69)
+c4 = Note(60)
+d4 = Note(62)
+d5 = Note(74)
+
+def test_from_pitch():
+    assert Note.from_pitch("C", 4) == c4
     
 def test_get_interval():
-    c4 = Note(60)
-    d4 = Note(62)
-    d5 = Note(74)
+
     # happy path
     assert Note.get_interval(c4, d4) == 2
 

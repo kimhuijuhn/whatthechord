@@ -1,7 +1,6 @@
 import pytest
-import sandbox
-import chord_grammar as cg
-from Note import Note
+import src.chordgrammar as cg
+from src.Note import Note
 
 def test_detect_primary_chords():
     c4 = Note(60)
