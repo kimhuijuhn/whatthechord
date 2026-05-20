@@ -28,6 +28,6 @@ def print_current_on_notes(midiin):
 
             time.sleep(0.01)
     except KeyboardInterrupt:
-        print("Exiting...")
+        print("\nExiting...")
     finally:
         midiin.close_port()

@@ -1,9 +1,17 @@
 NOTE_MAP = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
 class Note:
+    """ 
+    Represents a musical note.
+
+    Attributes:
+        value(int): MIDI value of a Note.
+        pitch(str): pitch of a Note.
+        octave(int): the octave value of a Note.
+    """
     def __init__(self, val):
         """ Create a Note instance given a MIDI value. """
-        self._value = val
+        self.value = val
         self.pitch = NOTE_MAP[val % 12]
         self.octave = (val // 12) - 1   
 
@@ -22,7 +30,10 @@ class Note:
         return self.pitch == other.pitch and self.octave == other.octave
 
     def get_interval(self, other):
-        return abs(self._value - other._value) % 12
+        return abs(self.value - other.value) % 12
+    
+    def get_midi_value(self):
+        return self.value
     
     # Utility methods
 
