@@ -1,4 +1,3 @@
-import pytest
 from src.Note import Note
 
 c4 = Note(60)
@@ -6,7 +5,7 @@ d4 = Note(62)
 d5 = Note(74)
 
 def test_from_pitch():
-    assert Note.from_pitch("C", 4) == c4
+    assert Note.from_pitch("C", 4).has_same_pitch(c4)
     
 def test_get_interval():
 

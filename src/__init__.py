@@ -1,1 +1,8 @@
-from . import chordgrammar, controller, Note, Scale
+from . import (
+    midi_constants,
+    events,
+    controller, 
+    Note, 
+    Scale,
+    chordgrammar, 
+)

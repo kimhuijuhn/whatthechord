@@ -1,4 +1,3 @@
-import pytest
 from src.Note import Note
 from src.Scale import Scale
 

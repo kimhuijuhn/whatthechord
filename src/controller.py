@@ -1,49 +1,68 @@
+from .events import EventBuffer
+from .midi_constants import STATUS_MASK, MidiStatus, ControlChange
 
-import time
-from .Note import Note
-from . import chordgrammar as cg
-from .Timestamp import Timestamp
+class MidiInputHandler:
+    """
+    Translates raw MIDI messages into EventBuffer calls using rtmidi callback.
+    """
 
-MIDI_ON = 144
-MIDI_OFF = 128
+    def __init__(self, buffer: EventBuffer):
+        self.buffer = buffer
+        self._dispatch = {
+            MidiStatus.NOTE_ON: self._handle_note_on,
+            MidiStatus.NOTE_OFF: self._handle_note_off,
+            MidiStatus.CONTROL_CHANGE: self._handle_cc,
+            MidiStatus.PITCH_BEND: self._handle_pitch_bend,
+        }
+    
+    def __call__(self, event, _data=None):
+        message, _deltatime = event
 
-def print_current_on_notes(midiin):
-    """ Print list of currently ON notes based on message """
-    active_notes = []
-    timestamp = Timestamp()
-    log = []
+        # ignore system calls for now
+        if len(message) < 2:
+            return
+        
+        status = message[0] & STATUS_MASK
+        handler = self._dispatch.get(status)
+        if handler:
+            handler(message)
 
-    try:
-        while True:
-            timestamp.start()
-            msg = midiin.get_message()
-            if msg:
-                status = msg[0][0]
-                note = Note(msg[0][1])
 
-                # store a new ON note
-                if status == MIDI_ON and note not in active_notes:
-                    note.set_on_time(timestamp.capture())
-                    active_notes.append(note)
+    # -------------------------------------------------------------------------
+    # Note ON/OFF
+    # -------------------------------------------------------------------------
 
-                # discard OFF note and store it on log
-                if status == MIDI_OFF and note in active_notes:
-                    to_log = active_notes[active_notes.index(note)]
-                    to_log.set_off_time(timestamp.capture())
-                    log.append(to_log)
-                    active_notes.remove(note)
+    def _handle_note_on(self, message):
+        """ """
+        if len(message) < 3:
+            return
+        pitch, velocity = message[1], message[2]
+        if velocity > 0:
+            self.buffer.on_note_on(pitch, velocity)
+        else:   # note-on with velocity 0 means note-off
+            self.buffer.on_note_off(pitch)
 
-                # print current ON notes
-                print(f"{active_notes}".ljust(40), end="\r", flush=True)
+    def _handle_note_off(self, message):
+        if len(message) < 3:
+            return
+        self.buffer.on_note_off(message[1])
 
-            time.sleep(0.01)
 
-    except KeyboardInterrupt:
-        print("\nExiting...")
+    # -------------------------------------------------------------------------
+    # Expressive messages
+    # -------------------------------------------------------------------------
 
-    finally:
-        midiin.close_port()
+    def _handle_cc(self, message):
+        # TODO: implement later 
+        if len(message) < 3:
+            return
+        controller, value = message[1], message[2]
+        if controller == 64:  # sustain pedal
+            pass
 
-    print("Note\tStart\tDuration")
-    for note in log:
-        print(f"{note}\t{note.on_time:2f}\t{(note.off_time - note.on_time):2f}")
+    def _handle_pitch_bend(self, message):
+        # TODO: implement later
+        if len(message) < 3:
+            return
+        # LSB + MSB, 14-bit value
+        bend = (message[2] << 7) | message[1]
