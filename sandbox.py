@@ -1,8 +1,10 @@
-import sys
-from mido import MidiFile
+import time
 
-filename = sys.argv[1]
-midi_file = MidiFile(filename)
+start = time.perf_counter()
+for i in range(100000):
+    i * i
+end = time.perf_counter()
 
-midi_file.print_tracks()
-
+print(f"start: {start}")
+print(f"end: {end}")
+print(f"elapsed: {end - start}")
