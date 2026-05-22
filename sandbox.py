@@ -1,10 +1,12 @@
-import time
+class ScaleType(Enum):
+    IONIAN = (0, 2, 4, 5, 7, 9, 11)
+    DORIAN = (0, 2, 3, 5, 7, 9, 10)
+    MAJOR = IONIAN
 
-start = time.perf_counter()
-for i in range(100000):
-    i * i
-end = time.perf_counter()
+class Scale:
+    tonic: int
+    scale: ScaleType
 
-print(f"start: {start}")
-print(f"end: {end}")
-print(f"elapsed: {end - start}")
+    def num_degrees():
+        pass
+

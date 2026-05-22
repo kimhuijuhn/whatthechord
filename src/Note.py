@@ -1,5 +1,15 @@
 NOTE_MAP = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
+# Enharmonically equivalents
+ENHARMONIC_SHARP = {
+    "Db": "C#",
+    "Eb": "D#",
+    "Gb": "F#",
+    "Ab": "G#",
+    "Bb": "A#",
+}
+
+
 class Note:
     """ 
     Represents a musical note.
