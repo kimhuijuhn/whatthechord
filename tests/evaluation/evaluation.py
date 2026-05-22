@@ -2,16 +2,16 @@ from src import harmony
 from src.Note import Note
 from src.Scale import Scale
 from src.Chord import Chord
-from progressions import PROGRESSIONS
+from .progressions import ALL_TEST_CASES
 
 def evaluate(test_cases, position_weights):
-    """Returns top-1 accuracy."""
-    harmony.POSITION_WEIGHTS = position_weights  # override hyperparameter
     correct = 0
     for midi_notes, expected_root, expected_quality, key_args in test_cases:
         chord = Chord([Note(n) for n in midi_notes])
         key = Scale.from_name(*key_args)
-        results = harmony.analyze(chord, scale=key)
+        results = harmony.analyze(
+            chord, scale=key, position_weights=position_weights
+        )
         if results and results[0].root == expected_root and results[0].quality == expected_quality:
             correct += 1
     return correct / len(test_cases)

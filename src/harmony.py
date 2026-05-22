@@ -151,7 +151,7 @@ def analyze(chord: Chord, scale: Scale | None = None,
 def _template_match_score(
     chord_intervals: tuple[int, ...],
     template: tuple[int, ...],
-    position_weights: tuple[float, ...] = POSITION_WEIGHTS,
+    position_weights: tuple[float, ...] = DEFAULT_POSITION_WEIGHTS,
 ) -> float:
     """
     Weighted ratio of template tones present in the chord.
