@@ -43,7 +43,7 @@ QUALITY_TEMPLATES: dict[str, tuple[int, ...]] = {
 # 3rd defines major/minor identity. 7th defines extension identity.
 # Root and 5th are more often omitted in voicings.
 # Default values are theory-motivated; tunable via labeled evaluation.
-POSITION_WEIGHTS: tuple[float, ...] = (1.0, 1.75, 1.0, 1.75)
+DEFAULT_POSITION_WEIGHTS: tuple[float, ...] = (1.0, 1.75, 1.0, 1.75)
 
 # Additive bonus to confidence for chords diatonic to the given scale.
 KEY_PRIOR_BOOST: float = 0.2
@@ -82,7 +82,9 @@ class ChordAnalysis:
 # Public API
 # -----------------------------------------------------------------------------
 
-def analyze(chord: Chord, scale: Scale | None = None) -> list[ChordAnalysis]:
+def analyze(chord: Chord, scale: Scale | None = None,
+            position_weights: tuple[float, ...] | None = None
+            ) -> list[ChordAnalysis]:
     """
     Identify the most plausible harmonic interpretations of a chord.
 
@@ -90,6 +92,8 @@ def analyze(chord: Chord, scale: Scale | None = None) -> list[ChordAnalysis]:
         chord: The chord to analyze.
         scale: Optional key context. When provided, diatonic interpretations
                receive a confidence boost and Roman numeral functions are set.
+        position_weights: Override the default POSITION_WEIGHTS. Used for
+                          hyperparameter sweeps. If None, uses module default.
 
     Returns:
         List of ChordAnalysis candidates, sorted by confidence (descending).
@@ -98,6 +102,10 @@ def analyze(chord: Chord, scale: Scale | None = None) -> list[ChordAnalysis]:
     Side effect:
         Sets chord.analyses to the returned list.
     """
+
+    if position_weights is None:
+        position_weights = DEFAULT_POSITION_WEIGHTS
+
     if not chord.is_analyzable:
         chord.analyses = []
         return []
@@ -106,16 +114,17 @@ def analyze(chord: Chord, scale: Scale | None = None) -> list[ChordAnalysis]:
     pitch_classes = chord.pitch_classes
     bass_pc = chord.bass.value % 12
 
-    # Try every possible pitch class as root, not just those present in the chord.
+    # Try every possible pitch class as root, not just those present in chord.
     # This is necessary for incomplete voicings where the root is omitted
-    # (e.g., jazz shell voicing E+Bb implies C7 even though C itself is absent).
+    # (e.g., jazz shell voicing E+Bb implies C7 even though C is absent).
     for root_pc in range(12):
         # Intervals from this candidate root, normalized
         intervals = tuple(sorted((pc - root_pc) % 12 for pc in pitch_classes))
 
         # Try matching against each quality template
         for quality, template in QUALITY_TEMPLATES.items():
-            confidence = _template_match_score(intervals, template)
+            confidence = _template_match_score(intervals, template, 
+                                            position_weights=position_weights)
             if confidence == 0.0:
                 continue
 
