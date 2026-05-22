@@ -8,9 +8,14 @@ wheels/
 
 # Pytest
 .pytest_cache
+.coverage
 
 # Virtual environments
 .venv
 
+# big files
+demo_video
+
 # Personal
 devlog
+sandbox.py

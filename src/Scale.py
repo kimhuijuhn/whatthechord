@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from Note import NOTE_MAP, ENHARMONIC_SHARP
-from ScaleType import ScaleType
-from midi_constants import KEY_SIGNATURE_TO_TONIC
+from .Note import NOTE_MAP, ENHARMONIC_SHARP
+from .ScaleType import ScaleType
+from .midi_constants import KEY_SIGNATURE_TO_TONIC
 
 
 @dataclass(frozen=True)

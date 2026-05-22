@@ -5,4 +5,5 @@ from . import (
     controller, 
     Note, 
     Scale, 
+    ScaleType,
 )
