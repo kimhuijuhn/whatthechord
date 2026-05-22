@@ -37,6 +37,7 @@ class Note:
     @property
     def is_active(self) -> bool:
         """ True while sustaining (note-on received, note-off not yet). """
+        #TODO: implement active notes with off notes but with sustain pedal on
         return self.on_time is not None and self.off_time is None
 
     @property
