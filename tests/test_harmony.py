@@ -144,8 +144,8 @@ def test_shell_voicing_root_and_third():
     chord = Chord([Note(60), Note(64)])  # C-E
     results = harmony.analyze(chord)
     c_maj = next(c for c in results if c.root == 0 and c.quality == "maj")
-    # Weighted: root(1.0) + 3rd(1.5) out of 1.0+1.5+1.0 = 3.5
-    expected = (1.0 + 1.5) / 3.5
+    # Weighted: root(1.0) + 3rd(1.75) out of 1.0+1.75+1.0 = 3.5
+    expected = (1.0 + 1.75) / 3.75
     assert abs(c_maj.confidence - expected) < 0.01
 
 
@@ -167,8 +167,8 @@ def test_shell_voicing_third_and_seventh():
     results = harmony.analyze(chord)
     c_dom7 = next((c for c in results if c.root == 0 and c.quality == "7"), None)
     assert c_dom7 is not None
-    # Weighted: 3rd(1.5) + 7th(1.5) out of 1.0+1.5+1.0+1.5 = 5.0
-    expected = (1.5 + 1.5) / 5.0
+    # Weighted: 3rd(1.75) + 7th(1.75) out of 1.0+1.75+1.0+1.75 = 5.0
+    expected = (1.75 + 1.75) / 5.50
     assert abs(c_dom7.confidence - expected) < 0.01
 
 

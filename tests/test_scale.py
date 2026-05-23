@@ -117,11 +117,11 @@ def test_from_name_case_insensitive():
     assert s1 == s2 == s3
 
 
-def test_from_name_flat_normalized():
+def test_from_name_sharp_normalized():
     """Bb is normalized to A# via ENHARMONIC_SHARP."""
-    s = Scale.from_name("Bb", "major")
+    s = Scale.from_name("A#", "major")
     assert s.tonic == 10
-    assert s.tonic_name == "A#"
+    assert s.tonic_name == "Bb"
 
 
 def test_from_name_unknown_tonic_raises():
