@@ -11,9 +11,8 @@ Covers:
 """
 
 import pytest
-from src.ScaleType import ScaleType
-from src.Scale import Scale
-
+from whatthechord.scale import Scale 
+from whatthechord.scale_type import ScaleType
 
 # =============================================================================
 # ScaleType (Enum)

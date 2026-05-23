@@ -15,8 +15,7 @@ Covers:
 import threading
 import time
 
-from src.events import EventBuffer
-from src.Note import Note
+from whatthechord.events import EventBuffer
 
 
 # -----------------------------------------------------------------------------

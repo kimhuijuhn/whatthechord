@@ -7,11 +7,8 @@ The __call__ flow itself is exercised in dispatch tests.
 """
 
 import pytest
-
-from src.events import EventBuffer
-from src.controller import MidiInputHandler
-from src.midi_constants import MidiStatus
-
+from whatthechord.events import EventBuffer
+from whatthechord.controller import MidiInputHandler
 
 # -----------------------------------------------------------------------------
 # Fixtures

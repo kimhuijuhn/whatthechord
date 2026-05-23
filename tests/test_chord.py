@@ -12,8 +12,8 @@ Verifies:
 """
 
 import pytest
-from src.Note import Note
-from src.Chord import Chord
+from whatthechord.note import Note
+from whatthechord.chord import Chord
 
 
 # -----------------------------------------------------------------------------

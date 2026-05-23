@@ -1,4 +1,11 @@
-from src.Note import Note
+"""
+Unit test for Note class.
+
+TODO: more robust test cases.
+"""
+
+
+from whatthechord.note import Note
 
 c4 = Note(60)
 d4 = Note(62)

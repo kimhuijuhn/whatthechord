@@ -8,10 +8,10 @@ Functions:
   per_progression_breakdown(...) -> per-progression accuracy
 """
 
-from src import harmony
-from src.Note import Note
-from src.Scale import Scale
-from src.Chord import Chord
+from whatthechord import harmony
+from whatthechord.note import Note
+from whatthechord.scale import Scale
+from whatthechord.chord import Chord
 from .progressions import ALL_TEST_CASES, PROGRESSIONS
 
 

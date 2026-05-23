@@ -12,10 +12,10 @@ Covers:
 """
 
 import pytest
-from src.Note import Note
-from src.Chord import Chord
-from src.Scale import Scale
-import src.harmony as harmony
+from whatthechord.note import Note
+from whatthechord.scale import Scale
+from whatthechord.chord import Chord
+from whatthechord import harmony
 
 
 # -----------------------------------------------------------------------------
