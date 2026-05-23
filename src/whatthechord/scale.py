@@ -173,27 +173,98 @@ class Scale:
             (0, 3, 6): "dim",
             (0, 4, 8): "aug",
         }.get(intervals, "unknown")
-
-    def roman_numeral(self, degree: int) -> str:
+    
+    def diatonic_seventh_quality(self, degree: int) -> str:
         """
-        Roman numeral for a diatonic triad on the given degree.
-        Uppercase = major/aug, lowercase = min/dim, ° suffix = dim.
-        Does not yet support non-diatonic chords.
+        Returns the diatonic 7th chord quality on a given scale degree.
+
+        Computed by combining the diatonic triad with the actual 7th scale
+        degree above the root — not by mapping triad quality to 7th quality.
+        This correctly handles natural minor's VII (G in A minor → G7, not
+        Gmaj7), Mixolydian-like contexts, etc.
+
+        Returns: 'maj7', '7', 'min7', 'm7b5', 'dim7', or 'unknown'.
+
+        Example:
+            >>> Scale.from_name("C", "major").diatonic_seventh_quality(5)
+            '7'   # G7 (dominant)
+            >>> Scale.from_name("A", "minor").diatonic_seventh_quality(7)
+            '7'   # G7 (VII7, not maj7)
+        """
+        n = self.num_degrees
+        if not (1 <= degree <= n):
+            raise ValueError(f"degree must be 1-{n}, got {degree}")
+
+        triad_pcs = self.diatonic_triad_pitches(degree)
+        root_pc = triad_pcs[0]
+
+        # 7th = the 7th scale position from this degree (6 steps up)
+        seventh_pos = (degree - 1 + 6) % n
+        seventh_pc = (self.tonic + self.intervals[seventh_pos]) % 12
+
+        intervals_from_root = tuple(sorted(
+            (pc - root_pc) % 12 for pc in (*triad_pcs, seventh_pc)
+        ))
+        return {
+            (0, 4, 7, 11): "maj7",
+            (0, 4, 7, 10): "7",
+            (0, 3, 7, 10): "min7",
+            (0, 3, 6, 10): "m7b5",
+            (0, 3, 6, 9):  "dim7",
+        }.get(intervals_from_root, "unknown")
+
+    def roman_numeral(self, degree: int, is_seventh: bool = False) -> str:
+        """
+        Roman numeral for a diatonic chord on the given degree.
+
+        Uppercase = major-quality root triad, lowercase = minor/diminished.
+        Suffix indicates extension:
+            triad: '°' = dim, '+' = aug
+            7th:   '7' suffix, 'maj7' for major 7, 'ø7' for half-diminished
+
+        Args:
+            degree: 1 to num_degrees.
+            is_seventh: if True, returns 7th chord Roman (e.g., 'V7', 'iiø7').
+
+        Examples:
+            >>> C = Scale.from_name("C", "major")
+            >>> C.roman_numeral(5)                # 'V'
+            >>> C.roman_numeral(5, is_seventh=True)  # 'V7'
+            >>> C.roman_numeral(7, is_seventh=True)  # 'viiø7'
+            >>> Am = Scale.from_name("A", "minor")
+            >>> Am.roman_numeral(7, is_seventh=True) # 'VII7' (not maj7!)
         """
         numerals = ["I", "II", "III", "IV", "V", "VI", "VII"]
         n = self.num_degrees
         if not (1 <= degree <= n):
             raise ValueError(f"degree must be 1-{n}, got {degree}")
-        quality = self.diatonic_triad_quality(degree)
-        symbol = numerals[degree - 1]
-        if quality == "min":
-            return symbol.lower()
-        elif quality == "dim":
-            return symbol.lower() + "°"
-        elif quality == "aug":
-            return symbol + "+"
-        else:
-            return symbol
 
+        symbol = numerals[degree - 1]
+
+        if not is_seventh:
+            quality = self.diatonic_triad_quality(degree)
+            if quality == "min":
+                return symbol.lower()
+            elif quality == "dim":
+                return symbol.lower() + "°"
+            elif quality == "aug":
+                return symbol + "+"
+            else:
+                return symbol
+        else:
+            quality = self.diatonic_seventh_quality(degree)
+            if quality == "maj7":
+                return symbol + "maj7"
+            elif quality == "7":
+                return symbol + "7"
+            elif quality == "min7":
+                return symbol.lower() + "7"
+            elif quality == "m7b5":
+                return symbol.lower() + "ø7"
+            elif quality == "dim7":
+                return symbol.lower() + "°7"
+            else:
+                return symbol + "?"
+            
     def __repr__(self) -> str:
         return f"Scale({self.tonic_name} {self.mode})"

@@ -323,3 +323,60 @@ def test_scale_repr():
     s = Scale.from_name("C", "major")
     assert "C" in repr(s)
     assert "major" in repr(s)
+
+class TestDiatonicSeventhQuality:
+    def test_c_major(self):
+        C = Scale.from_name("C", "major")
+        assert C.diatonic_seventh_quality(1) == "maj7"   # Cmaj7
+        assert C.diatonic_seventh_quality(2) == "min7"   # Dm7
+        assert C.diatonic_seventh_quality(3) == "min7"   # Em7
+        assert C.diatonic_seventh_quality(4) == "maj7"   # Fmaj7
+        assert C.diatonic_seventh_quality(5) == "7"      # G7
+        assert C.diatonic_seventh_quality(6) == "min7"   # Am7
+        assert C.diatonic_seventh_quality(7) == "m7b5"   # Bm7b5
+
+    def test_a_minor(self):
+        Am = Scale.from_name("A", "minor")
+        assert Am.diatonic_seventh_quality(1) == "min7"  # Am7
+        assert Am.diatonic_seventh_quality(2) == "m7b5"  # Bm7b5
+        assert Am.diatonic_seventh_quality(3) == "maj7"  # Cmaj7
+        assert Am.diatonic_seventh_quality(4) == "min7"  # Dm7
+        assert Am.diatonic_seventh_quality(5) == "min7"  # Em7 (natural minor!)
+        assert Am.diatonic_seventh_quality(6) == "maj7"  # Fmaj7
+        assert Am.diatonic_seventh_quality(7) == "7"     # G7 (not maj7!)
+
+    def test_invalid_degree_raises(self):
+        C = Scale.from_name("C", "major")
+        with pytest.raises(ValueError):
+            C.diatonic_seventh_quality(0)
+        with pytest.raises(ValueError):
+            C.diatonic_seventh_quality(8)
+
+
+class TestRomanNumeralSeventh:
+    def test_c_major_sevenths(self):
+        C = Scale.from_name("C", "major")
+        assert C.roman_numeral(1, is_seventh=True) == "Imaj7"
+        assert C.roman_numeral(2, is_seventh=True) == "ii7"
+        assert C.roman_numeral(3, is_seventh=True) == "iii7"
+        assert C.roman_numeral(4, is_seventh=True) == "IVmaj7"
+        assert C.roman_numeral(5, is_seventh=True) == "V7"
+        assert C.roman_numeral(6, is_seventh=True) == "vi7"
+        assert C.roman_numeral(7, is_seventh=True) == "viiø7"
+
+    def test_a_minor_sevenths(self):
+        Am = Scale.from_name("A", "minor")
+        assert Am.roman_numeral(1, is_seventh=True) == "i7"
+        assert Am.roman_numeral(2, is_seventh=True) == "iiø7"
+        assert Am.roman_numeral(3, is_seventh=True) == "IIImaj7"
+        assert Am.roman_numeral(4, is_seventh=True) == "iv7"
+        assert Am.roman_numeral(5, is_seventh=True) == "v7"
+        assert Am.roman_numeral(6, is_seventh=True) == "VImaj7"
+        assert Am.roman_numeral(7, is_seventh=True) == "VII7"
+
+    def test_triad_form_unchanged(self):
+        """Existing triad-form Roman numerals must still work."""
+        C = Scale.from_name("C", "major")
+        assert C.roman_numeral(1) == "I"
+        assert C.roman_numeral(2) == "ii"
+        assert C.roman_numeral(7) == "vii°"

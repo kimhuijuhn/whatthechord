@@ -47,6 +47,7 @@ DEFAULT_POSITION_WEIGHTS: tuple[float, ...] = (1.0, 1.75, 1.0, 1.75)
 
 # Additive bonus to confidence for chords diatonic to the given scale.
 KEY_PRIOR_BOOST: float = 0.2
+KEY_PRIOR_BOOST_SEVENTH: float = 0.1
 
 
 # -----------------------------------------------------------------------------
@@ -200,28 +201,19 @@ def _inversion_from_bass(
 
 
 def _apply_key_prior(candidates: list[ChordAnalysis], scale: Scale) -> None:
-    """
-    For each candidate whose root and quality match a diatonic triad of
-    the scale, boost confidence and assign the Roman numeral function.
-
-    Mutates candidates in place. Non-diatonic candidates are unchanged.
-
-    Note: Only triad qualities (maj/min/dim/aug) are matched against
-    diatonic positions; seventh chords are left untouched here.
-    Borrowed chords (e.g., V major in minor key) also not handled —
-    future work.
-    """
     triad_qualities = {"maj", "min", "dim", "aug"}
+    seventh_qualities = {"maj7", "7", "min7", "m7b5", "dim7"}
 
     for c in candidates:
-        if c.quality not in triad_qualities:
-            continue
-
         degree = scale.degree_of(c.root)
         if degree is None:
             continue
 
-        diatonic_quality = scale.diatonic_triad_quality(degree)
-        if c.quality == diatonic_quality:
-            c.confidence = min(1.0, c.confidence + KEY_PRIOR_BOOST)
-            c.function = scale.roman_numeral(degree)
+        if c.quality in triad_qualities:
+            if c.quality == scale.diatonic_triad_quality(degree):
+                c.confidence = min(1.0, c.confidence + KEY_PRIOR_BOOST)
+                c.function = scale.roman_numeral(degree, is_seventh=False)
+        elif c.quality in seventh_qualities:
+            if c.quality == scale.diatonic_seventh_quality(degree):
+                c.confidence = min(1.0, c.confidence + KEY_PRIOR_BOOST_SEVENTH)
+                c.function = scale.roman_numeral(degree, is_seventh=True)

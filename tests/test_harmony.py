@@ -312,3 +312,70 @@ def test_results_sorted_by_confidence_descending():
     results = harmony.analyze(chord)
     confidences = [c.confidence for c in results]
     assert confidences == sorted(confidences, reverse=True)
+
+
+class TestKeyPriorSevenths:
+    """7th chord function assignment via _apply_key_prior extension."""
+
+    def test_c_major_v7_recognized_with_function(self):
+        # G7 = G B D F. C major V7.
+        chord = Chord([Note(67), Note(71), Note(74), Note(77)])
+        key = Scale.from_name("C", "major")
+        results = harmony.analyze(chord, scale=key)
+        top = results[0]
+        assert top.root == 7  # G
+        assert top.quality == "7"
+        assert top.function == "V7"
+
+    def test_c_major_imaj7(self):
+        # Cmaj7 = C E G B
+        chord = Chord([Note(60), Note(64), Note(67), Note(71)])
+        key = Scale.from_name("C", "major")
+        results = harmony.analyze(chord, scale=key)
+        top = results[0]
+        assert top.function == "Imaj7"
+
+    def test_c_major_ii7(self):
+        # Dm7 = D F A C
+        chord = Chord([Note(62), Note(65), Note(69), Note(72)])
+        key = Scale.from_name("C", "major")
+        results = harmony.analyze(chord, scale=key)
+        top = results[0]
+        assert top.function == "ii7"
+
+    def test_a_minor_vii7(self):
+        """Critical case: A natural minor's G7 is VII7, not V7."""
+        # G7 = G B D F. In A minor, this is VII7.
+        chord = Chord([Note(67), Note(71), Note(74), Note(77)])
+        key = Scale.from_name("A", "minor")
+        results = harmony.analyze(chord, scale=key)
+        top = results[0]
+        assert top.root == 7
+        assert top.quality == "7"
+        assert top.function == "VII7"
+
+    def test_c_major_half_diminished(self):
+        # Bm7b5 = B D F A
+        chord = Chord([Note(71), Note(74), Note(77), Note(81)])
+        key = Scale.from_name("C", "major")
+        results = harmony.analyze(chord, scale=key)
+        # Find candidate with the expected root + quality
+        match = next(
+            (c for c in results if c.root == 11 and c.quality == "m7b5"),
+            None,
+        )
+        assert match is not None
+        assert match.function == "viiø7"
+
+    def test_non_diatonic_7th_no_function(self):
+        """D7 in C major is non-diatonic (F# not in scale) — no function."""
+        # D7 = D F# A C
+        chord = Chord([Note(62), Note(66), Note(69), Note(72)])
+        key = Scale.from_name("C", "major")
+        results = harmony.analyze(chord, scale=key)
+        d7 = next(
+            (c for c in results if c.root == 2 and c.quality == "7"),
+            None,
+        )
+        assert d7 is not None
+        assert d7.function is None  # No diatonic match in C major

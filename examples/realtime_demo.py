@@ -64,7 +64,7 @@ def main():
     # temporary key settings
     #TODO: maybe take in sysargv? 
     key = Scale.from_name(args.key[0], args.key[1])
-    print(f"Key: {key}\t Play chords from MIDI Controller (Ctrl+C to exit)")
+    print(f"KEY: {key}\tCHORD\t (Ctrl+C to exit)")
 
 
     # main loop
