@@ -109,7 +109,7 @@ def test_half_diminished_seventh():
     results = harmony.analyze(chord)
     top = results[0]
     assert top.root == 0
-    assert top.quality == "hdim7"
+    assert top.quality == "m7b5"
 
 
 def test_third_inversion_seventh():

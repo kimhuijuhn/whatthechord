@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from .Note import NOTE_MAP, ENHARMONIC_SHARP
+from .Note import NOTE_MAP, ENHARMONIC_FLAT
 from .ScaleType import ScaleType
 from .midi_constants import KEY_SIGNATURE_TO_TONIC
 
@@ -11,7 +11,10 @@ class Scale:
 
     Serves dual purpose: represents both a scale (set of pitches) and a
     musical key (tonal center). Modal context (e.g., D dorian within
-    C major) would require a separate class; not yet supported
+    C major) would require a separate class; not yet supported.
+
+    Note spellings default to flats (Eb, Bb, Ab, Db) — the convention
+    in jazz lead sheets.
 
     Frozen for hashability purposes.
     """
@@ -33,24 +36,28 @@ class Scale:
     def from_name(cls, tonic_str: str, scale_str: str = "MAJOR") -> "Scale":
         """
         Construct from human-readable names.
-        
-        Args:
-            tonic_str: 'C', 'C#', 'Db', etc. Flats normalized via ENHARMONIC.
-            scale_str: 'MAJOR', 'major', 'IONIAN', etc. Case-insensitive.
-        """
 
-        # normalize to sharp notations
-        #TODO: if key is given, follow
-        tonic_str = ENHARMONIC_SHARP.get(tonic_str, tonic_str)
+        Args:
+            tonic_str: 'C', 'Eb', 'Bb', etc. Sharp spellings (D#, A#, etc.)
+                       are normalized to flats via ENHARMONIC_FLAT.
+            scale_str: 'MAJOR', 'major', 'IONIAN', etc. Case-insensitive.
+
+        Examples:
+            Scale.from_name("Eb", "major")    # F blues, jazz standard key
+            Scale.from_name("D#", "major")    # same key, sharp spelling input
+            Scale.from_name("Bb")             # default major
+        """
+        # Normalize sharp input to flat (the canonical form)
+        tonic_str = ENHARMONIC_FLAT.get(tonic_str, tonic_str)
         if tonic_str not in NOTE_MAP:
             raise ValueError(f"unknown tonic '{tonic_str}'")
-        
+
         try:
             scale_type = ScaleType[scale_str.upper()]
         except KeyError:
             valid = [st.name for st in ScaleType]
             raise ValueError(f"unknown mode '{scale_str}'. Valid: {valid}")
-        
+
         return cls(tonic=NOTE_MAP.index(tonic_str), scale_type=scale_type)
 
     @classmethod
@@ -77,6 +84,11 @@ class Scale:
 
     @property
     def tonic_name(self) -> str:
+        """
+        Flat-spelled tonic name (e.g., 'Eb', 'Bb'). Default jazz convention.
+
+        For sharp-spelled name, use NOTE_MAP_SHARP[self.tonic] directly.
+        """
         return NOTE_MAP[self.tonic]
 
     @property
@@ -136,14 +148,14 @@ class Scale:
         n = self.num_degrees
         if not (1 <= degree <= n):
             raise ValueError(f"degree must be 1-{n}, got {degree}")
-        
+
         # Convert 1-indexed degree to 0-indexed scale position
         root_position = degree - 1
-        
+
         # Stack thirds: root, root+2 (third), root+4 (fifth)
         # Modulo num_degrees to wrap around the scale
         scale_positions = [(root_position + step) % n for step in (0, 2, 4)]
-        
+
         # Convert scale positions to absolute pitch classes
         return tuple(
             (self.tonic + self.intervals[pos]) % 12
