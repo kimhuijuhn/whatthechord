@@ -46,7 +46,7 @@ QUALITY_TEMPLATES: dict[str, tuple[int, ...]] = {
 DEFAULT_POSITION_WEIGHTS: tuple[float, ...] = (1.0, 1.75, 1.0, 1.75)
 
 # Additive bonus to confidence for chords diatonic to the given scale.
-KEY_PRIOR_BOOST: float = 0.2
+KEY_PRIOR_BOOST: float = 0.3
 KEY_PRIOR_BOOST_SEVENTH: float = 0.1
 
 
