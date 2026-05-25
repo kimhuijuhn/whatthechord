@@ -76,7 +76,7 @@ def main():
             harmony.analyze(chord, scale=key)
             output = format_chord_display(chord, top_n=args.top_n)
             if output != last_output:
-                print(f"\r{output:<120}", end="", flush=True)
+                print(f"{output}")
                 last_output = output
             time.sleep(0.05)  # 20Hz `display refresh
 

@@ -17,6 +17,7 @@ wheels/
 demo_video
 
 # Personal
+.DS_Store
 devlog
 wip
 sandbox.py
