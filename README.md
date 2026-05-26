@@ -125,7 +125,6 @@ src/whatthechord/
 ├── note.py           # MIDI value <-> pitch class, flat-default spelling
 ├── chord.py          # Container for a set of simultaneous Notes
 ├── scale.py          # Tonic + ScaleType, doubles as a key context
-├── scale_type.py     # MAJOR / MINOR enum with interval tuples
 ├── harmony.py        # The analysis engine — analyze() returns ranked candidates
 ├── events.py         # Thread-safe EventBuffer for live MIDI streams
 ├── controller.py     # rtmidi callback dispatcher
